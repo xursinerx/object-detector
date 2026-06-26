@@ -60,7 +60,7 @@ while success:
     occupancy = len(entered_ids) - len(left_ids)
     cv2.putText(annotated, f"In: {len(entered_ids)}", (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     cv2.putText(annotated, f"Out: {len(left_ids)}", (10, 90), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-    cv2.putText(annotated, f"Inside: {len(occupancy)}", (10, 120), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2)
+    cv2.putText(annotated, f"Inside: {occupancy}", (10, 120), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2)
 
     cv2.putText(annotated, fps_text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     # out.write(annotated)    
