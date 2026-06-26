@@ -1,6 +1,6 @@
 # Real-Time Object Detector
 
-Webcam-based object detection using YOLOv8 and OpenCV. Identifies everyday objects and draws bounding boxes around them in real-time.
+Object detection using YOLOv8 and OpenCV. Identifies everyday objects and draws bounding boxes around them.
 
 ## Setup
 
@@ -16,18 +16,19 @@ pip install ultralytics opencv-python
 ```bash
 python detect_image.py
 ```
+Runs detection on a sample image URL and saves the annotated result to `result.jpg`.
 
-**Real-time webcam detection (coming soon):**
+**Video detection:**
 ```bash
-python detect_realtime.py
+python detect_video.py
 ```
+Processes a video file frame by frame and writes annotated output to `output.mp4`.
+
+**Webcam (when available):**
+In `detect_video.py`, change `VideoCapture("path")` to `VideoCapture(0)` and swap `out.write` for `cv2.imshow`. See comments in the file.
 
 ## How it works
 
-- YOLOv8 nano model runs inference on each video frame
-- OpenCV captures the webcam stream and displays annotated output
+- YOLOv8 nano model runs inference on each frame
+- OpenCV handles video capture and output
 - Pre-trained on COCO dataset (80 object classes: people, vehicles, animals, household items, etc.)
-
-## Controls
-
-- Press `q` to quit the webcam feed
