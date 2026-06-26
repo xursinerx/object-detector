@@ -26,10 +26,11 @@ fps = int(cap.get(cv2.CAP_PROP_FPS))
 width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-#out = cv2.VideoWriter("output.mp4", cv2.VideoWriter_fourcc(*'mp4v'), fps, (width, height))
+# out = cv2.VideoWriter("output.mp4", cv2.VideoWriter_fourcc(*'mp4v'), fps, (width, height))
 
-line_y = height // 2
-crossed_ids = set()
+line_x = width // 2
+entered_ids = set()
+left_ids = set()
 prev_centers = {}
 
 success, frame = cap.read()
@@ -41,20 +42,25 @@ while success:
             continue
         track_id = int(box.id[0])
         x1, y1, x2, y2 = box.xyxy[0]
-        center_y = int((y1 + y2) / 2)
+        center_x = int((x1 + x2) / 2)
 
         if track_id in prev_centers:
-            if prev_centers[track_id] < line_y <= center_y:
-                crossed_ids.add(track_id)
+            if prev_centers[track_id] < line_x <= center_x:
+                entered_ids.add(track_id)
+            elif prev_centers[track_id] > line_x >= center_x:
+                left_ids.add(track_id)
 
-        prev_centers[track_id] = center_y
+        prev_centers[track_id] = center_x
     end = time.time()
 
     fps_text = f"FPS: {1 / (end - start):.1f}"
     annotated = results[0].plot()
 
-    cv2.line(annotated, (0, line_y), (width, line_y), (0, 0, 255), 2)
-    cv2.putText(annotated, f"Count: {len(crossed_ids)}", (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+    cv2.line(annotated, (line_x, 0), (line_x, height), (0, 0, 255), 2)
+    occupancy = len(entered_ids) - len(left_ids)
+    cv2.putText(annotated, f"In: {len(entered_ids)}", (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+    cv2.putText(annotated, f"Out: {len(left_ids)}", (10, 90), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+    cv2.putText(annotated, f"Inside: {len(occupancy)}", (10, 120), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2)
 
     cv2.putText(annotated, fps_text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     # out.write(annotated)    
@@ -65,4 +71,4 @@ while success:
     success, frame = cap.read()
 
 cap.release()
-#out.release()
+# out.release()
