@@ -7,7 +7,7 @@ Object detection and tracking using YOLOv8 and OpenCV. Identifies everyday objec
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install ultralytics opencv-python flask
+pip install ultralytics opencv-python flask mediapipe
 ```
 
 ## Usage
@@ -25,6 +25,18 @@ python detect_video.py --conf 0.5 --classes 0 2
 python detect_video.py --list-classes
 ```
 Processes video with object tracking. Press `q` to quit.
+
+**Hand gesture detection (static image):**
+```bash
+python detect_gestures.py
+```
+Detects hands in `hand.jpg` and saves annotated result to `hand_result.jpg`.
+
+**Combined person + gesture detection (webcam):**
+```bash
+python detect_combined.py
+```
+Runs YOLO person detection and MediaPipe hand gesture recognition simultaneously. Press `q` to quit.
 
 **Web interface (browser stream):**
 ```bash
@@ -46,3 +58,5 @@ Open `http://localhost:5000` in a browser. Accessible from other devices on the 
 - Zone counting with entry/exit tracking and occupancy display
 - Browser-based MJPEG streaming via Flask
 - Pre-trained on COCO dataset (80 object classes)
+- Hand gesture recognition via MediaPipe (open hand, fist, point, peace, gun)
+- Combined person detection + gesture recognition

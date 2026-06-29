@@ -13,13 +13,15 @@ model = YOLO("yolov8n.pt")
 parser = argparse.ArgumentParser()
 parser.add_argument("--conf", type=float, default=0.6)
 parser.add_argument("--classes", type=int, nargs="+", default=[0])
+parser.add_argument("--sources", nargs='+', default=["0"])
 args = parser.parse_args()
 
-cap = cv2.VideoCapture(0)
+sources = [int(s) if s.isdigit() else s for s in args.sources]
+caps = [cv2.VideoCapture(src) for src in sources]
 
-def generate_frames():
+def generate_frames(cap_obj):
     while True:
-        success, frame = cap.read()
+        success, frame = cap_obj.read()
         if not success:
             break
         start = time.time()
@@ -39,12 +41,13 @@ def generate_frames():
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
 
-@app.route('/video')
-def video():
-    return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+@app.route('/video/<int:idx>')
+def video(idx):
+    return Response(generate_frames(caps[idx]), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route('/')
 def index():
-    return '<html><body><img src="/video"></body></html>'
+    imgs = ''.join(f'<img src="/video/{i}">' for i in range(len(caps)))
+    return f'<html><body>{imgs}</body></html>'
 
 app.run(host='0.0.0.0', port=5000)
