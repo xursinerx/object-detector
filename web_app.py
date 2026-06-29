@@ -47,7 +47,46 @@ def video(idx):
 
 @app.route('/')
 def index():
-    imgs = ''.join(f'<img src="/video/{i}">' for i in range(len(caps)))
-    return f'<html><body>{imgs}</body></html>'
+    cards = ''
+    for i in range(len(caps)):
+        cards += f'''
+        <div class="feed">
+            <img src="/video/{i}">
+            <p>Camera {i}</p>
+        </div>'''
+
+    return f'''<html>
+<head>
+    <title>Object Detector</title>
+    <style>
+        body {{
+            background: #1a1a1a;
+            color: white;
+            font-family: sans-serif;
+            margin: 0;
+            padding: 20px;
+        }}
+        h1 {{
+            text-align: center;
+        }}
+        .grid {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+            gap: 20px;
+        }}
+        .feed {{
+            text-align: center;
+        }}
+        .feed img {{
+            width: 100%;
+            border-radius: 8px;
+        }}
+    </style>
+</head>
+<body>
+    <h1>Object Detector</h1>
+    <div class="grid">{cards}</div>
+</body>
+</html>'''
 
 app.run(host='0.0.0.0', port=5000)
