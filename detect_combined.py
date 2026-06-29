@@ -5,7 +5,12 @@ import cv2
 from ultralytics import YOLO
 import mediapipe as mp
 import time
+
 from gestures import fingers_up, gestures
+from debounce import Debouncer
+from actions import action
+
+db = Debouncer(cooldown=1, threshold=3)
 
 model = YOLO("yolov8n.pt")
 
@@ -34,6 +39,11 @@ while success:
             position = tuple(fingers_up(hand_landmarks))
             detected_gestures.append(gestures.get(position, "Unknown"))
         gesture_text = " | ".join(detected_gestures)
+        out = db.update(detected_gestures[0])
+        if out is not None:
+            command = action.get(out)
+            print(f"ACTION: {command}")
+            # Action currently doesn't do anything, needs to be implemented into something later
     end = time.time()
     fps_text = f"FPS: {1 / (end - start):.1f}"
 
